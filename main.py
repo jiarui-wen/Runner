@@ -9,8 +9,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 TORCH_EVENT = pygame.USEREVENT + 1
-pygame.time.set_timer(TORCH_EVENT, 700)
-
+pygame.time.set_timer(TORCH_EVENT, 500)
 
 
 class Game:
@@ -29,26 +28,12 @@ class Game:
                     sys.exit()
                 elif event.type == TORCH_EVENT:
                     self.torches.add(TorchL(self.screen), TorchR(self.screen))
-                    # self.torches.append(TorchL(self.screen))
-                    # self.torches.append(TorchR(self.screen))
 
-            
-            # self.torch_l.update()
-            # self.torch_r.update()
-
-            self.screen.fill(WHITE)
+            self.screen.fill(BLACK)
             self.road.render()
             self.torches.update()
             self.torches.draw(self.screen)
-            print(len(self.torches.sprites()))
-
-            # for torch in self.torches:
-            #     torch.update()
-            #     torch.render()
-            # self.torch_l.render()
-            # self.torch_r.render()
-
-            # print("left:", self.torch_l.rect.center, "right", self.torch_r.rect.center)
+            # print(len(self.torches.sprites()))
 
             pygame.display.update()
             self.clock.tick(60)
