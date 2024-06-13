@@ -1,7 +1,7 @@
 import pygame
-BLUE = (135, 206, 235)
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
+from settings import *
+from assets import assets
+from spritesheets import PlayerSheet
 
 class Road:
     def __init__(self, surf):
@@ -18,11 +18,10 @@ class TorchL(pygame.sprite.Sprite):
     def get_y(self):
         return int(-2.6 * self.x + 342)
     
-    def __init__(self, surf):
+    def __init__(self):
         super().__init__()
-        self.surf = surf
         self.scale = 0.5
-        self.image = pygame.transform.scale_by(pygame.image.load('torch.png').convert_alpha(), self.scale)
+        self.image = pygame.transform.scale_by(assets['torch'], self.scale)
         self.rect = self.image.get_rect()
         self.x = 200
         self.y = self.get_y()
@@ -34,7 +33,7 @@ class TorchL(pygame.sprite.Sprite):
             self.kill()
 
         self.scale += 0.01
-        self.image = pygame.transform.scale_by(pygame.image.load('torch.png').convert_alpha(), self.scale)
+        self.image = pygame.transform.scale_by(assets['torch'], self.scale)
         self.rect = self.image.get_rect()
         self.x -= self.vel
         self.y = self.get_y()
@@ -42,13 +41,25 @@ class TorchL(pygame.sprite.Sprite):
         self.rect.center = [self.x, self.y]
 
 class TorchR(TorchL):
-    def __init__(self, surf):
-        super().__init__(surf)
+    def __init__(self):
+        super().__init__()
         self.image = pygame.transform.scale_by(
-            pygame.transform.flip(pygame.image.load('torch.png').convert_alpha(), True, False), self.scale)
+            pygame.transform.flip(assets['torch'], True, False), self.scale)
 
     def update(self):
         super().update()
         self.image = pygame.transform.scale_by(
-            pygame.transform.flip(pygame.image.load('torch.png').convert_alpha(), True, False), self.scale)
-        self.rect.center = [self.surf.get_width() - self.x, self.y]
+            pygame.transform.flip(assets['torch'], True, False), self.scale)
+        self.rect.center = [WIDTH - self.x, self.y]
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.sheet = PlayerSheet()
+        self.image = self.sheet.animate()
+        self.rect = self.image.get_rect(center=PLAYER_CENTER)
+
+    def update(self):
+        self.image = self.sheet.animate()
+        
+
