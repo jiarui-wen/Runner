@@ -23,5 +23,8 @@ assets = {
     'torch': load_img('torch.png'),
     'player': {
         'running': load_folder('player/running')
+    },
+    'coin': {
+        'default': load_img('coin.png')
     }
 }

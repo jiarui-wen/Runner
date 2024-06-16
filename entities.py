@@ -1,13 +1,12 @@
 import pygame
 from settings import *
 from assets import assets
-from spritesheets import PlayerSheet
+from spritesheets import PlayerSheet, CoinSheet
 
 class Road:
     def __init__(self, surf):
         self.left_side = 200
         self.width = 25
-        self.img = pygame
         self.surf = surf
     
     def render(self):
@@ -58,6 +57,16 @@ class Player(pygame.sprite.Sprite):
         self.sheet = PlayerSheet()
         self.image = self.sheet.animate()
         self.rect = self.image.get_rect(center=PLAYER_CENTER)
+
+    def update(self):
+        self.image = self.sheet.animate()
+
+class Coin(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.sheet = CoinSheet()
+        self.image = self.sheet.animate()
+        self.rect = self.image.get_rect(center=(100, 100))
 
     def update(self):
         self.image = self.sheet.animate()

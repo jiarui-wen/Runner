@@ -1,6 +1,6 @@
 import pygame
 import sys
-from entities import Road, TorchL, TorchR, Player
+from entities import Road, TorchL, TorchR, Player, Coin
 from settings import *
 
 pygame.init()
@@ -19,6 +19,8 @@ class Game:
         self.torches = pygame.sprite.Group()
         self.player = pygame.sprite.GroupSingle()
         self.player.add(Player())
+        self.coins = pygame.sprite.Group()
+        self.coins.add(Coin())
 
     def run(self):
         running = True
@@ -37,6 +39,8 @@ class Game:
             # print(len(self.torches.sprites()))
             self.player.update()
             self.player.draw(self.screen)
+            self.coins.update()
+            self.coins.draw(self.screen)
 
             pygame.display.update()
             self.clock.tick(60)
