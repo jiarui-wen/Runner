@@ -20,11 +20,14 @@ def load_folder(folder_name):
 assets = {
     # 'torch': load_img('torch', (0, 0, 0)),
     # 'player': load_img('player', (48, 104, 80))
-    'torch': load_img('torch.png'),
+    # 'torch': load_img('torch.png'),
     'player': {
         'running': load_folder('player/running')
     },
     'coin': {
         'default': load_img('coin.png')
+    },
+    'torch': {
+        'default': load_img('torch.png')
     }
 }
