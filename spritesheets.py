@@ -41,24 +41,26 @@ class PlayerSheet(SpriteSheet):
 class CoinSheet(SpriteSheet):
     def __init__(self):
         super().__init__('coin', count=5, dimension=16, init_scale=2)
-        for state in self.assets:
-            self.sprites[state] = []
-            for i in range(self.count):
-                sprite = pygame.transform.scale_by(
-                    self.assets[state].subsurface(pygame.Rect((self.dimension * i, 0), (self.dimension, self.dimension))), self.init_scale)
-                # pygame.Surface.set_colorkey(sprite, )
-                self.sprites[state].append(sprite)
+        self.sprites = assets[self.name]
+        # for state in self.assets:
+        #     self.sprites[state] = []
+        #     for i in range(self.count):
+        #         sprite = pygame.transform.scale_by(
+        #             self.assets[state].subsurface(pygame.Rect((self.dimension * i, 0), (self.dimension, self.dimension))), self.init_scale)
+        #         # pygame.Surface.set_colorkey(sprite, )
+        #         self.sprites[state].append(sprite)
 
 
 class TorchSheet(SpriteSheet):
     def __init__(self):
         super().__init__('torch', count=8, dimension=64)
-        for state in self.assets:
-            self.sprites[state] = []
-            for row in range(2):
-                for i in range(4):
-                    sprite = pygame.transform.scale_by(
-                        self.assets[state].subsurface(pygame.Rect((self.dimension * i, self.dimension * row), (self.dimension, self.dimension))), 
-                        self.init_scale)
-                    # pygame.Surface.set_colorkey(sprite, )
-                    self.sprites[state].append(sprite)
+        self.sprites = assets[self.name]
+        # for state in self.assets:
+        #     self.sprites[state] = []
+        #     for row in range(2):
+        #         for i in range(4):
+        #             sprite = pygame.transform.scale_by(
+        #                 self.assets[state].subsurface(pygame.Rect((self.dimension * i, self.dimension * row), (self.dimension, self.dimension))), 
+        #                 self.init_scale)
+        #             # pygame.Surface.set_colorkey(sprite, )
+        #             self.sprites[state].append(sprite)

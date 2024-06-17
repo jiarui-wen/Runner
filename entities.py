@@ -10,13 +10,10 @@ class Road:
         self.surf = surf
     
     def render(self):
-        pygame.draw.line(self.surf, WHITE, [270, -360], [0, 720])      
-        pygame.draw.line(self.surf, WHITE, [270, -360], [540, 720])
+        pygame.draw.line(self.surf, WHITE, [WIDTH//2, -360], [0, HEIGHT])      
+        pygame.draw.line(self.surf, WHITE, [WIDTH//2, -360], [WIDTH, HEIGHT])
 
-class TorchL(pygame.sprite.Sprite):
-    def get_y(self):
-        return int(-2.6 * self.x + 342)
-    
+class TorchL(pygame.sprite.Sprite):  
     def get_x(self):
         return int((342 - self.y) / 2.6)
     
@@ -38,15 +35,14 @@ class TorchL(pygame.sprite.Sprite):
         if self.x < -50:
             self.kill()
 
-        self.scale += 0.01
-        # self.image = pygame.transform.scale_by(assets['torch'], self.scale)
-        self.image = self.sheet.animate(scale=self.scale)
-        # self.x -= self.vel
-        # self.y = self.get_y()
         self.y += self.vel
         self.x = self.get_x()
         self.vel += self.accel
+        self.scale += 0.01
+        self.image = self.sheet.animate(scale=self.scale)
+        self.rect = self.image.get_rect() # DO NOT DELETE THIS LINE! rect needs to be updated each time the image is scaled.
         self.rect.center = [self.x, self.y]
+        print('left', self.scale, end='')
 
 class TorchR(TorchL):
     def __init__(self):
@@ -61,6 +57,7 @@ class TorchR(TorchL):
         #     pygame.transform.flip(assets['torch'], True, False), self.scale)
         self.image = pygame.transform.flip(self.sheet.animate(scale=self.scale), True, False)
         self.rect.center = [WIDTH - self.x, self.y]
+        print('right', self.scale)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -72,17 +69,14 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.image = self.sheet.animate()
 
-class Coin(pygame.sprite.Sprite):
-    def get_y(self):
-        return int(-7 * self.x + 1530)
-    
+class Coin(pygame.sprite.Sprite):  
     def get_x(self):
         return int((1530 - self.y) / 7)
     
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.scale = 0.5
-        # self.sheet = CoinSheet()
+        self.sheet = CoinSheet()
         self.image = self.sheet.animate()
         self.rect = self.image.get_rect()
         # self.x = 270
@@ -97,7 +91,8 @@ class Coin(pygame.sprite.Sprite):
             self.kill()
 
         self.scale += 0.01
-        self.image = self.sheet.animate(pos=p, scale=self.scale)
+        self.image = self.sheet.animate(scale=self.scale)
+        self.rect = self.image.get_rect() # DO NOT DELETE THIS LINE! rect needs to be updated each time the image is scaled.
         # self.x -= self.vel
         # self.y = self.get_y()
         self.y += self.vel

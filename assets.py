@@ -16,7 +16,7 @@ def load_folder(folder_name):
         images.append(load_img(folder_name + '/' + img))
     return images
 
-def load_spritesheet(name, dimension, scale):
+def load_spritesheet(name, dimension, scale=1):
     sprites = []
     img = load_img(name)
     rows = img.get_height() // dimension
@@ -37,9 +37,9 @@ assets = {
         'running': load_folder('player/running')
     },
     'coin': {
-        'default': load_img('coin.png')
+        'default': load_spritesheet('coin.png', 16, 1.5)
     },
     'torch': {
-        'default': load_img('torch.png')
+        'default': load_spritesheet('torch.png', 64)
     }
 }

@@ -23,7 +23,7 @@ class Game:
         self.player = pygame.sprite.GroupSingle()
         self.player.add(Player())
         self.coins = pygame.sprite.Group()
-        self.coin_sheet = CoinSheet()
+        # self.coin_sheet = CoinSheet()
 
     def run(self):
         running = True
