@@ -2,13 +2,16 @@ import pygame
 import sys
 from entities import Road, TorchL, TorchR, Player, Coin
 from settings import *
+from spritesheets import CoinSheet
 
 pygame.init()
 
 
 
 TORCH_EVENT = pygame.USEREVENT + 1
+COIN_EVENT = pygame.USEREVENT + 2
 pygame.time.set_timer(TORCH_EVENT, 500)
+pygame.time.set_timer(COIN_EVENT, 300)
 
 
 class Game:
@@ -20,7 +23,7 @@ class Game:
         self.player = pygame.sprite.GroupSingle()
         self.player.add(Player())
         self.coins = pygame.sprite.Group()
-        self.coins.add(Coin())
+        self.coin_sheet = CoinSheet()
 
     def run(self):
         running = True
@@ -31,6 +34,8 @@ class Game:
                     sys.exit()
                 elif event.type == TORCH_EVENT:
                     self.torches.add(TorchL(), TorchR())
+                elif event.type == COIN_EVENT:
+                    self.coins.add(Coin())
 
             self.screen.fill(BLACK)
             self.road.render()
@@ -41,6 +46,7 @@ class Game:
             self.player.draw(self.screen)
             self.coins.update()
             self.coins.draw(self.screen)
+            print(len(self.torches.sprites()))
 
             pygame.display.update()
             self.clock.tick(60)

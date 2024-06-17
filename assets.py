@@ -16,6 +16,18 @@ def load_folder(folder_name):
         images.append(load_img(folder_name + '/' + img))
     return images
 
+def load_spritesheet(name, dimension, scale):
+    sprites = []
+    img = load_img(name)
+    rows = img.get_height() // dimension
+    columns = img.get_width() // dimension
+    for r in range(rows):
+        for c in range(columns):
+            sprites.append(pygame.transform.scale_by(
+                        img.subsurface(pygame.Rect((dimension * c, dimension * r), (dimension, dimension))), scale))
+    return sprites
+
+
 
 assets = {
     # 'torch': load_img('torch', (0, 0, 0)),

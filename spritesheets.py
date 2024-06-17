@@ -2,6 +2,7 @@ import pygame
 from assets import assets
 from settings import *
 
+
 class SpriteSheet:
     def __init__(self, name, count=0, dimension=0, init_scale=1, speed=0.1, state='default'):
         self.name = name
@@ -18,20 +19,28 @@ class SpriteSheet:
         self.state = state
         self.pos = 0
 
-    def animate(self, scale=1):
-        self.pos += self.speed
-        if self.pos >= self.count:
-            self.pos = 0
-        return pygame.transform.scale_by(self.sprites[self.state][int(self.pos)], scale)
+    def animate(self, pos=-1, scale=1):
+        if pos < 0: # default
+            self.pos += self.speed
+            if self.pos >= self.count:
+                self.pos = 0
+            return pygame.transform.scale_by(self.sprites[self.state][int(self.pos)], scale)
+        else: # a pos is passed into the function
+            return pygame.transform.scale_by(self.sprites[self.state][pos], scale)
+
     
 class PlayerSheet(SpriteSheet):
     def __init__(self):
-        super().__init__('player', count=11, speed=0.2, state='running')
-        self.sprites = self.assets
+        super().__init__('player', count=11, speed=0.2, state='running', init_scale=0.7)
+        for state in self.assets:
+            self.sprites[state] = []
+            for i in range(self.count):
+                sprite = pygame.transform.scale_by(self.assets[state][i], self.init_scale)
+                self.sprites[state].append(sprite)
 
 class CoinSheet(SpriteSheet):
     def __init__(self):
-        super().__init__('coin', count=5, dimension=16, init_scale=3)
+        super().__init__('coin', count=5, dimension=16, init_scale=2)
         for state in self.assets:
             self.sprites[state] = []
             for i in range(self.count):
@@ -39,6 +48,7 @@ class CoinSheet(SpriteSheet):
                     self.assets[state].subsurface(pygame.Rect((self.dimension * i, 0), (self.dimension, self.dimension))), self.init_scale)
                 # pygame.Surface.set_colorkey(sprite, )
                 self.sprites[state].append(sprite)
+
 
 class TorchSheet(SpriteSheet):
     def __init__(self):
