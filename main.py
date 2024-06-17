@@ -1,7 +1,7 @@
 import pygame
 import sys
 from entities import Road, Torch, Player, Coin
-from spritesheets import Pos_Iterator
+from animation import Pos_Iterator
 from settings import *
 
 pygame.init()
@@ -24,6 +24,8 @@ class Game:
         self.player.add(Player())
         self.coins = pygame.sprite.Group()
         self.coin_iterator = Pos_Iterator(5, 0.1)
+        # pygame.event.set_grab(1)
+        self.touch = False
 
     def run(self):
         running = True
@@ -32,10 +34,39 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    match event.key:
+                        case pygame.K_q:
+                            pygame.quit()
+                            sys.exit()
                 elif event.type == TORCH_EVENT:
                     self.torches.add(Torch(True), Torch(False))
                 elif event.type == COIN_EVENT:
                     self.coins.add(Coin())
+                elif event.type == pygame.FINGERMOTION and (self.touch == False):
+                    self.touch = True
+                    if abs(event.dx) > abs(event.dy):
+                        if event.dx < -0.001:
+                            print('left')
+                        elif event.dx > 0.001:
+                            print('right')
+                    else:
+                        if event.dy < -0.001:
+                            print('up')
+                        elif event.dy > 0.001:
+                            print('down')
+
+                elif event.type == pygame.FINGERUP:
+                    self.touch = False
+                
+                # elif event.type == pygame.MOUSEMOTION:
+                #     movement = pygame.mouse.get_rel()
+                #     left = bool(movement[0] < -3)
+                #     up = bool(movement[1] < -3)
+                #     if left:
+                #         print('left!')
+                #     # print('left', left, 'up', up)
+
 
             self.screen.fill(BLACK)
             self.road.render()
@@ -53,7 +84,7 @@ class Game:
 
             pygame.display.update()
             self.clock.tick(60)
-            print(self.clock.get_fps())
+            # print(self.clock.get_fps())
 
     
 Game().run()
