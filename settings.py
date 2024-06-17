@@ -10,5 +10,3 @@ WHITE = (255, 255, 255)
 
 PLAYER_CENTER = [WIDTH//2, 600]
 PLAYER_COLORKEY = (48, 104, 80)
-
-# def sprites_iterator()

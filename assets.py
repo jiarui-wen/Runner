@@ -4,16 +4,17 @@ import os
 
 pygame.display.set_mode(RES)
 
-def load_img(name):
-    img = pygame.image.load('images/'+ name).convert_alpha()
+def load_img(name, scale=1):
+    img = pygame.transform.scale_by(pygame.image.load('images/'+ name).convert_alpha(), scale)
     # pygame.Surface.set_colorkey(img, colorkey)
     pygame.Surface.set_colorkey(img, img.get_at((1, 1)))
     return img
 
-def load_folder(folder_name):
+def load_folder(folder_name, scale=1):
     images = []
-    for img in os.listdir('images/' + folder_name):
-        images.append(load_img(folder_name + '/' + img))
+    for file in os.listdir('images/' + folder_name):
+        img = load_img(folder_name + '/' + file, scale)
+        images.append(img)
     return images
 
 def load_spritesheet(name, dimension, scale=1):
@@ -34,7 +35,7 @@ assets = {
     # 'player': load_img('player', (48, 104, 80))
     # 'torch': load_img('torch.png'),
     'player': {
-        'running': load_folder('player/running')
+        'default': load_folder('player/running', 0.7)
     },
     'coin': {
         'default': load_spritesheet('coin.png', 16, 1.5)
