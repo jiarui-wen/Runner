@@ -31,12 +31,14 @@ def load_spritesheet(name, dimension, scale=1):
 
 assets = {
     'player': {
-        'default': load_folder('player/running', 0.7)
+        'default': load_folder('player/running', Constants.Player.init_scale),
+        'left': load_folder('player/left', Constants.Player.init_scale),
+        'right': load_folder('player/right', Constants.Player.init_scale)
     },
     'coin': {
-        'default': load_spritesheet('coin.png', 16, 1.5)
+        'default': load_spritesheet('coin.png', Constants.Coin.dimension, Constants.Coin.init_scale)
     },
     'torch': {
-        'default': load_spritesheet('torch.png', 64)
+        'default': load_spritesheet('torch.png', Constants.Torch.dimension)
     }
 }

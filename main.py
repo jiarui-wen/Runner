@@ -24,12 +24,13 @@ class Game:
         self.player.add(Player())
         self.coins = pygame.sprite.Group()
         self.coin_iterator = Pos_Iterator(5, 0.1)
-        # pygame.event.set_grab(1)
         self.touch = False
+        self.movement = 'default'
 
     def run(self):
         running = True
         while running:
+            self.movement = 'default'
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -47,9 +48,9 @@ class Game:
                     self.touch = True
                     if abs(event.dx) > abs(event.dy):
                         if event.dx < -0.001:
-                            print('left')
+                            self.movement = 'left'
                         elif event.dx > 0.001:
-                            print('right')
+                            self.movement = 'right'
                     else:
                         if event.dy < -0.001:
                             print('up')
@@ -58,22 +59,13 @@ class Game:
 
                 elif event.type == pygame.FINGERUP:
                     self.touch = False
+                    
                 
-                # elif event.type == pygame.MOUSEMOTION:
-                #     movement = pygame.mouse.get_rel()
-                #     left = bool(movement[0] < -3)
-                #     up = bool(movement[1] < -3)
-                #     if left:
-                #         print('left!')
-                #     # print('left', left, 'up', up)
 
-
-            self.screen.fill(BLACK)
+            self.screen.fill(WALL_GREY)
             self.road.render()
             self.torches.update()
             self.torches.draw(self.screen)
-            self.player.update()
-            self.player.draw(self.screen)
 
             self.coin_iterator.update()
             self.coin_pos = self.coin_iterator.get_pos()
@@ -81,10 +73,13 @@ class Game:
             # if later decide to have coins rotate on their own instead of uniformly, 
             # just don't pass self.coin_pos to self.coins.update()
             self.coins.draw(self.screen)
+            self.player.update(self.movement)
+            self.player.draw(self.screen)
 
             pygame.display.update()
             self.clock.tick(60)
             # print(self.clock.get_fps())
+            print(self.movement)
 
     
 Game().run()

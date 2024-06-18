@@ -7,10 +7,9 @@ class Road:
         self.left_side = 200
         self.width = 25
         self.surf = surf
-    
+
     def render(self):
-        pygame.draw.line(self.surf, WHITE, [WIDTH//2, -360], [0, HEIGHT])      
-        pygame.draw.line(self.surf, WHITE, [WIDTH//2, -360], [WIDTH, HEIGHT])
+        pygame.draw.polygon(self.surf, FLOOR_GREY, [(WIDTH//2, -360), (0, HEIGHT), (WIDTH, HEIGHT)])
 
 class Torch(pygame.sprite.Sprite):  
     def get_x(self):
@@ -49,9 +48,37 @@ class Player(pygame.sprite.Sprite):
         self.animation = Animation('player', speed=0.2)
         self.image = self.animation.animate()
         self.rect = self.image.get_rect(center=PLAYER_CENTER)
+        self.movement = 'default'
+        self.x_pos = 1
+        self.ignore = False
 
-    def update(self):
+    def update(self, movement='default'):
         self.image = self.animation.animate()
+
+        if self.ignore:
+            if self.movement == 'left':
+                self.rect.x -= 10
+                if self.rect.centerx < Constants.Player.x_pos[self.x_pos - 1]:
+                    self.rect.centerx = Constants.Player.x_pos[self.x_pos - 1]
+                    self.x_pos -= 1
+                    self.ignore = False
+                    # self.movement = 'default'
+                    self.animation.set_state('default')
+            elif self.movement == 'right':
+                self.rect.x += 10
+                if self.rect.centerx > Constants.Player.x_pos[self.x_pos + 1]:
+                    self.rect.centerx = Constants.Player.x_pos[self.x_pos + 1]
+                    self.x_pos += 1
+                    self.ignore = False
+                    self.animation.set_state('default')
+
+        else:
+            if movement == 'default':
+                pass
+            elif (movement == 'left' and self.x_pos != 0) or (movement == 'right' and self.x_pos != 2):
+                self.ignore = True
+                self.movement = movement
+                self.animation.set_state(movement)
 
 class Coin(pygame.sprite.Sprite):  
     def get_x(self):
@@ -69,7 +96,7 @@ class Coin(pygame.sprite.Sprite):
         self.accel = 0.02
 
     def update(self, p=-1):
-        if self.x < -50:
+        if self.y < -50:
             self.kill()
 
         self.scale += 0.01
