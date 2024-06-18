@@ -26,6 +26,7 @@ class Game:
         self.coin_iterator = Pos_Iterator(5, 0.1)
         self.touch = False
         self.movement = 'default'
+        self.score = 0
 
     def run(self):
         running = True
@@ -53,14 +54,17 @@ class Game:
                             self.movement = 'right'
                     else:
                         if event.dy < -0.001:
-                            print('up')
+                            self.movement = 'up'
                         elif event.dy > 0.001:
                             print('down')
 
                 elif event.type == pygame.FINGERUP:
                     self.touch = False
                     
-                
+            for coin in self.coins.sprites():
+                if self.player.sprite.rect_collision.colliderect(coin):
+                    pygame.sprite.Sprite.kill(coin)
+                    self.score += 1
 
             self.screen.fill(WALL_GREY)
             self.road.render()
@@ -79,7 +83,8 @@ class Game:
             pygame.display.update()
             self.clock.tick(60)
             # print(self.clock.get_fps())
-            print(self.movement)
+            print(self.score)
+            
 
     
 Game().run()

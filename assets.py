@@ -33,7 +33,8 @@ assets = {
     'player': {
         'default': load_folder('player/running', Constants.Player.init_scale),
         'left': load_folder('player/left', Constants.Player.init_scale),
-        'right': load_folder('player/right', Constants.Player.init_scale)
+        'right': load_folder('player/right', Constants.Player.init_scale),
+        'up': load_folder('player/up', Constants.Player.init_scale)
     },
     'coin': {
         'default': load_spritesheet('coin.png', Constants.Coin.dimension, Constants.Coin.init_scale)
