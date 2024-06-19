@@ -3,7 +3,7 @@ import sys
 from entities import Road, Torch, Player, Coin, Rock
 from animation import Pos_Iterator
 from settings import *
-from random import choice
+from random import choice, randint
 
 pygame.init()
 
@@ -34,6 +34,16 @@ class Game:
         self.movement = 'default'
         self.score = 0
         self.health = 50
+        self.num_coins = []
+        self.lanes = []
+        self.rock_in_coins = []
+        
+        for i in range(50):
+            num_coins = randint(3, 7)
+            self.num_coins.append(num_coins)
+            self.lanes.append(choice([-1, 0, 1]))
+            self.rock_in_coins.append(randint(1, num_coins-1))
+
 
     def run(self):
         running = True
@@ -54,12 +64,34 @@ class Game:
                             self.movement = 'right'
                         case pygame.K_w:
                             self.movement = 'up'
+
                 elif event.type == ADD_TORCH:
                     self.torches.add(Torch(True), Torch(False))
+
                 elif event.type == ADD_COIN:
-                    self.coins.add(Coin(choice([-1, 0, 1])))
+                    if len(self.num_coins) == 0:
+                        for i in range(50):
+                            num_coins = randint(3, 7)
+                            self.num_coins.append(num_coins)
+                            self.lanes.append(choice([-1, 0, 1]))
+                            self.rock_in_coins.append(randint(0, num_coins))
+
+                    if self.num_coins[-1] == 0:
+                        self.num_coins.pop(-1)
+                        self.lanes.pop(-1)
+                        self.rock_in_coins.pop(-1)
+                    else:
+                        if self.num_coins[-1] == self.rock_in_coins[-1]:
+                            self.rocks.add(Rock(self.lanes[-1]))
+                        else:
+                            self.coins.add(Coin(self.lanes[-1]))
+                        self.num_coins[-1] -= 1
+
                 elif event.type == ADD_ROCK:
-                    self.rocks.add(Rock(choice([-1, 0, 1])))
+                    choices = [-1, 0, 1]
+                    choices.remove(self.lanes[-1])
+                    self.rocks.add(Rock(choice(choices)))
+
                 elif event.type == pygame.FINGERMOTION and (self.touch == False):
                     self.touch = True
                     if abs(event.dx) > abs(event.dy):
@@ -112,7 +144,7 @@ class Game:
             pygame.display.update()
             self.clock.tick(60)
             # print(self.clock.get_fps())
-            print(self.health)
+            # print(self.health)
             # print(self.score)
             
 
