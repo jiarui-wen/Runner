@@ -31,7 +31,7 @@ PLAYER_COLORKEY = (48, 104, 80)
 
 class Constants:
     class Player:
-        init_scale = 0.7
+        init_scale = 0.8
         x_pos = [int((1530 - PLAYER_CENTER[1]) / 7), 
                  WIDTH//2, 
                  WIDTH-int((1530 - PLAYER_CENTER[1]) / 7)]

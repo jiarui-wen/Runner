@@ -41,6 +41,12 @@ class Game:
                         case pygame.K_q:
                             pygame.quit()
                             sys.exit()
+                        case pygame.K_a:
+                            self.movement = 'left'
+                        case pygame.K_d:
+                            self.movement = 'right'
+                        case pygame.K_w:
+                            self.movement = 'up'
                 elif event.type == TORCH_EVENT:
                     self.torches.add(Torch(True), Torch(False))
                 elif event.type == COIN_EVENT:
@@ -82,8 +88,8 @@ class Game:
 
             pygame.display.update()
             self.clock.tick(60)
-            # print(self.clock.get_fps())
-            print(self.score)
+            print(self.clock.get_fps())
+            # print(self.score)
             
 
     

@@ -55,51 +55,129 @@ class Player(pygame.sprite.Sprite):
         self.y_vel = -10
         self.y_accel = 0.1
         self.actions = set()
+        self.jumping = False
+        self.attacking = False
+        self.reset_jump = True
+        self.x_dir = 0
 
     def update(self, movement='default'):
         self.image = self.animation.animate()
 
         if self.ignore:
             if self.movement == 'left':
-                self.rect.x -= 10
-                if self.rect.centerx < Constants.Player.x_pos[self.x_pos - 1]:
-                    self.rect.centerx = Constants.Player.x_pos[self.x_pos - 1]
+                if movement == 'default':
+                    pass
+                elif movement == 'left' and self.x_pos != 0:
                     self.x_pos -= 1
-                    self.ignore = False
-                    # self.movement = 'default'
-                    self.animation.set_state('default')
-            elif self.movement == 'right':
-                self.rect.x += 10
-                if self.rect.centerx > Constants.Player.x_pos[self.x_pos + 1]:
-                    self.rect.centerx = Constants.Player.x_pos[self.x_pos + 1]
+                elif movement == 'right' and self.x_pos != 2:
+                    self.movement = 'right'
                     self.x_pos += 1
-                    self.ignore = False
-                    self.animation.set_state('default')
+                    self.x_dir = 1
+                elif movement == 'up' and self.jumping == False:
+                    self.movement = 'up'
+                    self.jumping = True
+            elif self.movement == 'right':
+                if movement == 'default':
+                    pass
+                elif movement == 'right' and self.x_pos != 2:
+                    self.x_pos += 1
+                elif movement == 'left' and self.x_pos != 0:
+                    self.movement = 'left'
+                    self.x_pos -= 1
+                    self.x_dir = -1
+                elif movement == 'up' and self.jumping == False:
+                    self.movement = 'up'
+                    self.jumping = True
             elif self.movement == 'up':
+                if movement == 'left' and self.x_pos != 0:
+                    self.x_pos -= 1
+                    self.x_dir = -1
+                elif movement == 'right' and self.x_pos != 2:
+                    self.x_pos += 1
+                    self.x_dir = 1
+            
+            self.animation.set_state(self.movement, reset=(self.movement == 'up' and self.reset_jump))
+            self.image = self.animation.animate()
+            if self.movement == 'up' : 
+                self.reset_jump = False
+                self.animation.set_loop(False)
                 if self.image == False:
-                    self.ignore = False
+                    self.jumping = False
                     self.animation.set_state('default')
                     self.animation.set_loop(True)
+                    self.reset_jump = True
                     self.image = self.animation.animate()
-                # self.y_vel += self.y_accel
-                # self.rect.y += self.y_vel
-                # if self.rect.centery > PLAYER_CENTER[1]:
-                #     self.rect.centery = PLAYER_CENTER[1]
-                #     self.ignore = False
-                #     self.animation.set_state('default')
-                #     self.y_vel = -10
+                    if self.x_dir == 0:
+                        self.movement = 'default'
+                        self.ignore = False
+                    
 
-            self.rect_collision.centerx = self.rect.centerx
-            self.rect_collision.centery = self.rect.centery - 80
+            self.rect.x += (self.x_dir * 10)
+            if self.x_dir < 0 and self.rect.centerx < Constants.Player.x_pos[self.x_pos]:
+                self.rect.centerx = Constants.Player.x_pos[self.x_pos]
+                self.x_dir = 0
+                if self.movement == 'left':
+                    self.movement = 'default'
+                    self.animation.set_state('default')
+                    self.ignore = False
+
+            elif self.x_dir > 0 and self.rect.centerx > Constants.Player.x_pos[self.x_pos]:
+                self.rect.centerx = Constants.Player.x_pos[self.x_pos]
+                self.x_dir = 0
+                if self.movement == 'right':
+                    self.movement = 'default'
+                    self.animation.set_state('default')
+                    self.ignore = False
         else:
-            if movement == 'default':
-                pass
-            elif (movement == 'left' and self.x_pos != 0) or (movement == 'right' and self.x_pos != 2) or (movement == 'up'):
-                self.ignore = True
-                self.movement = movement
-                self.animation.set_state(movement)
-                self.animation.set_loop(movement != 'up' and movement != 'down')
+            if movement != 'default':
+                if movement == 'left' and self.x_pos != 0:
+                    self.ignore = True
+                    self.movement = movement
+                    self.x_pos -= 1
+                    self.x_dir = -1
+                elif movement == 'right' and self.x_pos != 2:
+                    self.ignore = True
+                    self.movement = movement
+                    self.x_pos += 1
+                    self.x_dir = 1
+                elif movement == 'up':
+                    self.ignore = True
+                    self.movement = movement
+                    self.jumping = True
 
+                # self.rect.x -= 10
+                # if self.rect.centerx < Constants.Player.x_pos[self.x_pos - 1]:
+                #     self.rect.centerx = Constants.Player.x_pos[self.x_pos - 1]
+                #     self.x_pos -= 1
+                #     self.ignore = False
+            #         # self.movement = 'default'
+            #         self.animation.set_state('default')
+            # elif self.movement == 'right':
+            #     self.rect.x += 10
+            #     if self.rect.centerx > Constants.Player.x_pos[self.x_pos + 1]:
+            #         self.rect.centerx = Constants.Player.x_pos[self.x_pos + 1]
+            #         self.x_pos += 1
+            #         self.ignore = False
+            #         self.animation.set_state('default')
+            # elif self.movement == 'up':
+            #     if self.image == False:
+            #         self.ignore = False
+            #         self.animation.set_state('default')
+            #         self.animation.set_loop(True)
+            #         self.image = self.animation.animate()
+
+            # self.rect_collision.centerx = self.rect.centerx
+            # self.rect_collision.centery = self.rect.centery - 80
+
+            # elif (movement == 'left' and self.x_pos != 0) or (movement == 'right' and self.x_pos != 2) or (movement == 'up'):
+            #     self.ignore = True
+            #     self.movement = movement
+            #     self.animation.set_state(movement)
+            #     self.animation.set_loop(movement != 'up' and movement != 'down')
+
+
+        # useless, untested code
+        ##################################
         # if movement != 'default':
         #     if movement == 'left' and self.x_pos != 0:
         #         self.x_pos -= 1

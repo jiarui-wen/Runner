@@ -26,9 +26,10 @@ class Animation:
         self.pos = 0
         self.loop = True
 
-    def set_state(self, state):
+    def set_state(self, state, reset=False):
         self.state = state
-        self.pos = 0
+        if reset:
+            self.pos = 0
 
     def set_loop(self, loop):
         self.loop = loop
