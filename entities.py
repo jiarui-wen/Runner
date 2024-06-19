@@ -91,6 +91,16 @@ class Player(pygame.sprite.Sprite):
                 elif movement == 'right' and self.x_pos != 2:
                     self.x_pos += 1
                     self.x_dir = 1
+            elif self.movement == 'default':
+                if movement == 'left' and self.x_pos != 0:
+                    self.x_pos -= 1
+                    self.x_dir = -1
+                elif movement == 'right' and self.x_pos != 2:
+                    self.x_pos += 1
+                    self.x_dir = 1
+                elif movement == 'default':
+                    if self.x_dir == 0:
+                        self.ignore = False
             
             self.animation.set_state(self.movement, reset=(self.movement == 'up' and self.reset_jump))
             self.image = self.animation.animate()
@@ -99,6 +109,7 @@ class Player(pygame.sprite.Sprite):
                 self.animation.set_loop(False)
                 if self.image == False:
                     self.jumping = False
+                    self.movement = 'default'
                     self.animation.set_state('default')
                     self.animation.set_loop(True)
                     self.reset_jump = True
