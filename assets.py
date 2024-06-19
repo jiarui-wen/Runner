@@ -41,5 +41,6 @@ assets = {
     },
     'torch': {
         'default': load_spritesheet('torch.png', Constants.Torch.dimension)
-    }
+    },
+    'rock': load_folder('rock', 0.5)
 }

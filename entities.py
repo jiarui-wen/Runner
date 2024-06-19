@@ -1,6 +1,8 @@
 import pygame
 from settings import *
 from animation import Animation
+from random import choice
+from assets import assets
 
 class Road:
     def __init__(self, surf):
@@ -48,7 +50,7 @@ class Player(pygame.sprite.Sprite):
         self.animation = Animation('player', speed=0.2)
         self.image = self.animation.animate()
         self.rect = self.image.get_rect(center=PLAYER_CENTER)
-        self.rect_collision = pygame.Rect(self.rect.center, (5, 5))
+        self.rect_collision = pygame.Rect((self.rect.centerx, self.rect.centery - Constants.Player.rect_offset_y), (40, 50))
         self.movement = 'default'
         self.x_pos = 1
         self.ignore = False
@@ -118,8 +120,6 @@ class Player(pygame.sprite.Sprite):
                         self.movement = 'default'
                         self.ignore = False
                     
-
-            self.rect.x += (self.x_dir * 10)
             if self.x_dir < 0 and self.rect.centerx < Constants.Player.x_pos[self.x_pos]:
                 self.rect.centerx = Constants.Player.x_pos[self.x_pos]
                 self.x_dir = 0
@@ -151,32 +151,91 @@ class Player(pygame.sprite.Sprite):
                     self.ignore = True
                     self.movement = movement
                     self.jumping = True
-        print(self.movement, self.ignore)
+        # print(self.movement, self.ignore)
 
-class Coin(pygame.sprite.Sprite):  
+        self.rect.x += (self.x_dir * 10)
+        self.rect_collision.centerx = self.rect.centerx
+        if self.jumping:
+            self.rect_collision.centery = -100
+        else:
+            self.rect_collision.centery = self.rect.centery - Constants.Player.rect_offset_y
+
+class BaseEntity(pygame.sprite.Sprite):
     def get_x(self):
-        return int((1530 - self.y) / 7)
-    
-    def __init__(self):
+        if self.lane == -1:
+            return int((1530 - self.y) / 7)
+        elif self.lane == 0:
+            return WIDTH // 2
+        else:
+            return WIDTH - int((1530 - self.y) / 7)
+        
+    def __init__(self, lane):
         pygame.sprite.Sprite.__init__(self)
+        self.lane = lane
         self.scale = 0.5
-        self.animation = Animation('coin')
-        self.image = self.animation.animate(scale=self.scale)
-        self.rect = self.image.get_rect()
         self.y = -50
         self.x = self.get_x()
         self.vel = 2
         self.accel = 0.02
-
-    def update(self, p=-1):
+    
+    def update(self):
         if self.y > HEIGHT + 50:
             self.kill()
-
-        self.scale += 0.01
-        self.image = self.animation.animate(pos=p, scale=self.scale)
-        self.rect = self.image.get_rect() # DO NOT DELETE THIS LINE! rect needs to be updated each time the image is scaled.
-        self.y += self.vel
         self.x = self.get_x()
+        self.y += self.vel
         self.vel += self.accel
-        self.rect.center = [self.x, self.y]
+        self.scale += 0.01
+    
+
+
+class Coin(BaseEntity):  
+    # def get_x(self):
+    #     if self.lane == -1:
+    #         return int((1530 - self.y) / 7)
+    #     elif self.lane == 0:
+    #         return WIDTH // 2
+    #     else:
+    #         return WIDTH - int((1530 - self.y) / 7)
+    
+    def __init__(self, lane):
+        # pygame.sprite.Sprite.__init__(self)
+        super().__init__(lane)
+        # self.scale = 0.5
+        self.animation = Animation('coin')
+        self.image = self.animation.animate(scale=self.scale)
+        self.rect = self.image.get_rect()
+        # self.lane = lane
+        # self.y = -50
+        # self.x = self.get_x()
+        # self.vel = 2
+        # self.accel = 0.02
+
+    def update(self, p=-1):
+        # if self.y > HEIGHT + 50:
+        #     self.kill()
+
+        # self.x = self.get_x()
+        # self.y += self.vel
+        # self.vel += self.accel
+        # self.scale += 0.01
+        super().update()
+        self.image = self.animation.animate(pos=p, scale=self.scale)
+        self.rect = self.image.get_rect(center=[self.x, self.y]) # DO NOT DELETE THIS LINE! rect needs to be updated each time the image is scaled.
+            
+
+class Rock(BaseEntity):
+    def __init__(self, lane):
+        super().__init__(lane)
+        # pygame.sprite.Sprite.__init__(self)
+        self.base_img = choice(assets['rock'])
+        self.image = self.base_img
+        self.rect = self.image.get_rect()
+
+    def update(self):
+        # self.image = choice(assets['rock'])
+        super().update()
+        self.image = pygame.transform.scale_by(self.base_img, self.scale)
+        self.rect = self.image.get_rect(center=[self.x, self.y])
+
+
 

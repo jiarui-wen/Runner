@@ -30,6 +30,11 @@ class Animation:
         self.state = state
         if reset:
             self.pos = 0
+        if self.name == 'player' and self.state == 'up':
+            self.speed = 0.15
+        elif self.name == 'player':
+            self.speed = 0.2
+            
 
     def set_loop(self, loop):
         self.loop = loop

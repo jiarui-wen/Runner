@@ -35,6 +35,7 @@ class Constants:
         x_pos = [int((1530 - PLAYER_CENTER[1]) / 7), 
                  WIDTH//2, 
                  WIDTH-int((1530 - PLAYER_CENTER[1]) / 7)]
+        rect_offset_y = 30
     class Coin:
         dimension = 16
         init_scale = 1.5

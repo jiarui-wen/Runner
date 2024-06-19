@@ -1,17 +1,21 @@
 import pygame
 import sys
-from entities import Road, Torch, Player, Coin
+from entities import Road, Torch, Player, Coin, Rock
 from animation import Pos_Iterator
 from settings import *
+from random import choice
 
 pygame.init()
 
 
 
-TORCH_EVENT = pygame.USEREVENT + 1
-COIN_EVENT = pygame.USEREVENT + 2
-pygame.time.set_timer(TORCH_EVENT, 500)
-pygame.time.set_timer(COIN_EVENT, 300)
+ADD_TORCH = pygame.USEREVENT + 1
+ADD_COIN = pygame.USEREVENT + 2
+ADD_ROCK = pygame.USEREVENT + 3
+
+pygame.time.set_timer(ADD_TORCH, 500)
+pygame.time.set_timer(ADD_COIN, 300)
+pygame.time.set_timer(ADD_ROCK, 1500)
 
 
 class Game:
@@ -24,9 +28,12 @@ class Game:
         self.player.add(Player())
         self.coins = pygame.sprite.Group()
         self.coin_iterator = Pos_Iterator(5, 0.1)
+        self.rocks = pygame.sprite.Group()
+        self.rocks_onscreen = pygame.sprite.Group()
         self.touch = False
         self.movement = 'default'
         self.score = 0
+        self.health = 50
 
     def run(self):
         running = True
@@ -47,10 +54,12 @@ class Game:
                             self.movement = 'right'
                         case pygame.K_w:
                             self.movement = 'up'
-                elif event.type == TORCH_EVENT:
+                elif event.type == ADD_TORCH:
                     self.torches.add(Torch(True), Torch(False))
-                elif event.type == COIN_EVENT:
-                    self.coins.add(Coin())
+                elif event.type == ADD_COIN:
+                    self.coins.add(Coin(choice([-1, 0, 1])))
+                elif event.type == ADD_ROCK:
+                    self.rocks.add(Rock(choice([-1, 0, 1])))
                 elif event.type == pygame.FINGERMOTION and (self.touch == False):
                     self.touch = True
                     if abs(event.dx) > abs(event.dy):
@@ -72,6 +81,13 @@ class Game:
                     pygame.sprite.Sprite.kill(coin)
                     self.score += 1
 
+            for rock in self.rocks.sprites():
+                if self.player.sprite.rect_collision.colliderect(rock):
+                    # pygame.sprite.Sprite.kill(rock)
+                    self.rocks.remove(rock)
+                    self.rocks_onscreen.add(rock)
+                    self.health -= 1
+
             self.screen.fill(WALL_GREY)
             self.road.render()
             self.torches.update()
@@ -83,12 +99,20 @@ class Game:
             # if later decide to have coins rotate on their own instead of uniformly, 
             # just don't pass self.coin_pos to self.coins.update()
             self.coins.draw(self.screen)
+            self.rocks.update()
+            self.rocks.draw(self.screen)
+            self.rocks_onscreen.update()
+            self.rocks_onscreen.draw(self.screen)
+            self.rocks.draw(self.screen)
             self.player.update(self.movement)
             self.player.draw(self.screen)
+
+            # pygame.draw.rect(self.screen, "Red", self.player.sprite.rect_collision)
 
             pygame.display.update()
             self.clock.tick(60)
             # print(self.clock.get_fps())
+            print(self.health)
             # print(self.score)
             
 
