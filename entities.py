@@ -52,11 +52,7 @@ class Player(pygame.sprite.Sprite):
         self.movement = 'default'
         self.x_pos = 1
         self.ignore = False
-        self.y_vel = -10
-        self.y_accel = 0.1
-        self.actions = set()
         self.jumping = False
-        self.attacking = False
         self.reset_jump = True
         self.x_dir = 0
 
@@ -144,82 +140,8 @@ class Player(pygame.sprite.Sprite):
                     self.ignore = True
                     self.movement = movement
                     self.jumping = True
+        print(self.movement, self.ignore)
 
-                # self.rect.x -= 10
-                # if self.rect.centerx < Constants.Player.x_pos[self.x_pos - 1]:
-                #     self.rect.centerx = Constants.Player.x_pos[self.x_pos - 1]
-                #     self.x_pos -= 1
-                #     self.ignore = False
-            #         # self.movement = 'default'
-            #         self.animation.set_state('default')
-            # elif self.movement == 'right':
-            #     self.rect.x += 10
-            #     if self.rect.centerx > Constants.Player.x_pos[self.x_pos + 1]:
-            #         self.rect.centerx = Constants.Player.x_pos[self.x_pos + 1]
-            #         self.x_pos += 1
-            #         self.ignore = False
-            #         self.animation.set_state('default')
-            # elif self.movement == 'up':
-            #     if self.image == False:
-            #         self.ignore = False
-            #         self.animation.set_state('default')
-            #         self.animation.set_loop(True)
-            #         self.image = self.animation.animate()
-
-            # self.rect_collision.centerx = self.rect.centerx
-            # self.rect_collision.centery = self.rect.centery - 80
-
-            # elif (movement == 'left' and self.x_pos != 0) or (movement == 'right' and self.x_pos != 2) or (movement == 'up'):
-            #     self.ignore = True
-            #     self.movement = movement
-            #     self.animation.set_state(movement)
-            #     self.animation.set_loop(movement != 'up' and movement != 'down')
-
-
-        # useless, untested code
-        ##################################
-        # if movement != 'default':
-        #     if movement == 'left' and self.x_pos != 0:
-        #         self.x_pos -= 1
-        #         self.actions.add(movement)
-        #         if 'right' in self.actions:
-        #             self.actions.remove('right')
-
-        #     if movement == 'right' and self.x_pos != 2:
-        #         self.x_pos += 1
-        #         self.actions.add(movement)
-
-                
-        #         self.x_pos -= 1
-        #         self.ignore = True
-        #         self.movement = movement
-        #         self.animation.set_state(movement)
-        #         self.animation.set_loop(movement != 'up' and movement != 'down')
-
-        
-
-        # for move in self.actions:
-        #     if move == 'left':
-        #         self.rect.x -= 10
-        #         if self.rect.centerx < Constants.Player.x_pos[self.x_pos - 1]:
-        #             self.rect.centerx = Constants.Player.x_pos[self.x_pos - 1]
-        #             self.x_pos -= 1
-        #             self.ignore = False
-        #             self.animation.set_state('default')
-        #             self.actions.remove(move)
-        #     elif move == 'right':
-        #         self.rect.x += 10
-        #         if self.rect.centerx > Constants.Player.x_pos[self.x_pos + 1]:
-        #             self.rect.centerx = Constants.Player.x_pos[self.x_pos + 1]
-        #             self.x_pos += 1
-        #             self.ignore = False
-        #             self.animation.set_state('default')
-        #     elif move == 'up':
-        #         if self.image == False:
-        #             self.ignore = False
-        #             self.animation.set_state('default')
-        #             self.animation.set_loop(True)
-        #             self.image = self.animation.animate()
 class Coin(pygame.sprite.Sprite):  
     def get_x(self):
         return int((1530 - self.y) / 7)

@@ -88,7 +88,7 @@ class Game:
 
             pygame.display.update()
             self.clock.tick(60)
-            print(self.clock.get_fps())
+            # print(self.clock.get_fps())
             # print(self.score)
             
 
