@@ -69,13 +69,6 @@ class Game:
                     self.torches.add(Torch(True), Torch(False))
 
                 elif event.type == ADD_COIN:
-                    if len(self.num_coins) == 0:
-                        for i in range(50):
-                            num_coins = randint(3, 7)
-                            self.num_coins.append(num_coins)
-                            self.lanes.append(choice([-1, 0, 1]))
-                            self.rock_in_coins.append(randint(0, num_coins))
-
                     if self.num_coins[-1] == 0:
                         self.num_coins.pop(-1)
                         self.lanes.pop(-1)
@@ -86,6 +79,13 @@ class Game:
                         else:
                             self.coins.add(Coin(self.lanes[-1]))
                         self.num_coins[-1] -= 1
+
+                    if len(self.num_coins) == 0:
+                        for i in range(50):
+                            num_coins = randint(3, 7)
+                            self.num_coins.append(num_coins)
+                            self.lanes.append(choice([-1, 0, 1]))
+                            self.rock_in_coins.append(randint(0, num_coins))
 
                 elif event.type == ADD_ROCK:
                     choices = [-1, 0, 1]
@@ -114,6 +114,9 @@ class Game:
                     self.score += 1
 
             for rock in self.rocks.sprites():
+                if self.player.sprite.rect.bottom < rock.rect.bottom:
+                    self.rocks.remove(rock)
+                    self.rocks_onscreen.add(rock)
                 if self.player.sprite.rect_collision.colliderect(rock):
                     # pygame.sprite.Sprite.kill(rock)
                     self.rocks.remove(rock)
@@ -131,22 +134,26 @@ class Game:
             # if later decide to have coins rotate on their own instead of uniformly, 
             # just don't pass self.coin_pos to self.coins.update()
             self.coins.draw(self.screen)
-            self.rocks.update()
             self.rocks.draw(self.screen)
-            self.rocks_onscreen.update()
-            self.rocks_onscreen.draw(self.screen)
+            self.rocks.update()
             self.rocks.draw(self.screen)
             self.player.update(self.movement)
             self.player.draw(self.screen)
+            self.rocks_onscreen.update()
+            self.rocks_onscreen.draw(self.screen)
 
             # pygame.draw.rect(self.screen, "Red", self.player.sprite.rect_collision)
 
             pygame.display.update()
             self.clock.tick(60)
+            # print(len(self.rocks_onscreen.sprites()))
             # print(self.clock.get_fps())
-            # print(self.health)
+            print(self.health)
             # print(self.score)
             
 
     
 Game().run()
+
+# class Main:
+#     def __init__(self):
