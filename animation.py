@@ -18,13 +18,13 @@ class Pos_Iterator:
     
 
 class Animation:
-    def __init__(self, name, speed=0.1, state='default'):
+    def __init__(self, name, speed=0.1, state='default', loop=True):
         self.name = name
         self.sprites = assets[name]
         self.speed = speed
         self.state = state
+        self.loop = loop
         self.pos = 0
-        self.loop = True
 
     def set_state(self, state, reset=False):
         self.state = state

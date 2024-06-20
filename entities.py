@@ -45,13 +45,13 @@ class Torch(pygame.sprite.Sprite):
             self.rect.center = [WIDTH - self.x, self.y]
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, movement='default'):
         pygame.sprite.Sprite.__init__(self)
         self.animation = Animation('player', speed=0.2)
         self.image = self.animation.animate()
         self.rect = self.image.get_rect(center=PLAYER_CENTER)
         self.rect_collision = pygame.Rect((self.rect.centerx, self.rect.centery - Constants.Player.rect_offset_y), (40, 50))
-        self.movement = 'default'
+        self.movement = movement
         self.x_pos = 1
         self.ignore = False
         self.jumping = False
@@ -60,10 +60,11 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, movement='default'):
         self.image = self.animation.animate()
-        if self.movement == 'dying':
+        if self.movement == 'dying' or self.movement == 'idle':
             if self.image == False:
                 return True # died
             return False
+
 
         if self.ignore:
             if self.movement == 'left':

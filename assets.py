@@ -35,7 +35,12 @@ assets = {
         'left': load_folder('player/left', Constants.Player.init_scale),
         'right': load_folder('player/right', Constants.Player.init_scale),
         'up': load_folder('player/up', Constants.Player.init_scale),
-        'dying': load_folder('player/dying', Constants.Player.init_scale)
+        'dying': load_folder('player/dying', Constants.Player.init_scale),
+        'idle': load_folder('player/idle', Constants.Player.init_scale),
+        'lookaround': load_folder('player/lookaround', Constants.Player.init_scale),
+        'turn': load_folder('player/turn', Constants.Player.init_scale)
+        # 'drawsword': load_folder('player/drawsword', Constants.Player.init_scale)
+
     },
     'coin': {
         'default': load_spritesheet('coin.png', Constants.Coin.dimension, Constants.Coin.init_scale)
@@ -45,9 +50,14 @@ assets = {
     },
     'rock': load_folder('rock', 0.5),
     'button': {
-        'play': load_folder('button/play')
+        'play': load_folder('button/play'),
+        'info': load_folder('button/info'),
+        'ok': load_folder('button/ok')
     },
     'text': {
-        'dungeonrun': load_img('dungeonrun.png')
-    }
+        'dungeonrun': load_img('dungeonrun.png'),
+        'paused': load_img('paused.png', 1.5),
+        'pressentertoresume': load_img('pressentertoresume.png', 0.4)
+    },
+    'infopage': load_img('infopage.png')
 }
