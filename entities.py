@@ -60,6 +60,10 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, movement='default'):
         self.image = self.animation.animate()
+        if self.movement == 'dying':
+            if self.image == False:
+                return True # died
+            return False
 
         if self.ignore:
             if self.movement == 'left':
@@ -159,6 +163,13 @@ class Player(pygame.sprite.Sprite):
         else:
             self.rect_collision.centery = self.rect.centery - Constants.Player.rect_offset_y
 
+        return False
+    
+    def dying(self):
+        self.animation.set_state('dying', True)
+        self.animation.set_loop(False)
+        self.movement = 'dying'
+
 class BaseEntity(pygame.sprite.Sprite):
     def get_x(self):
         if self.lane == -1:
@@ -211,6 +222,29 @@ class Rock(BaseEntity):
         super().update()
         self.image = pygame.transform.scale_by(self.base_img, self.scale)
         self.rect = self.image.get_rect(center=[self.x, self.y])
+
+class Button:
+  def __init__(self, pos, name):
+    self.name = name
+    self.pos = pos
+    self.image = assets['button'][name][0]
+    self.rect = self.image.get_rect(center = pos)
+
+  def update(self, position):
+    if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+      self.image = assets['button'][self.name][1]
+      self.rect.center = [self.pos[0] - 3, self.pos[1] - 3]
+    else:
+      self.image = assets['button'][self.name][0]
+      self.rect.center = self.pos
+
+  def click(self, position):
+    if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+      return True
+    
+  def render(self, surf):
+    surf.blit(self.image, self.rect)
+
 
 
 

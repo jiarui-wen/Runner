@@ -34,7 +34,8 @@ assets = {
         'default': load_folder('player/running', Constants.Player.init_scale),
         'left': load_folder('player/left', Constants.Player.init_scale),
         'right': load_folder('player/right', Constants.Player.init_scale),
-        'up': load_folder('player/up', Constants.Player.init_scale)
+        'up': load_folder('player/up', Constants.Player.init_scale),
+        'dying': load_folder('player/dying', Constants.Player.init_scale)
     },
     'coin': {
         'default': load_spritesheet('coin.png', Constants.Coin.dimension, Constants.Coin.init_scale)
@@ -42,5 +43,11 @@ assets = {
     'torch': {
         'default': load_spritesheet('torch.png', Constants.Torch.dimension)
     },
-    'rock': load_folder('rock', 0.5)
+    'rock': load_folder('rock', 0.5),
+    'button': {
+        'play': load_folder('button/play')
+    },
+    'text': {
+        'dungeonrun': load_img('dungeonrun.png')
+    }
 }

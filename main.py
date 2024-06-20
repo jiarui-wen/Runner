@@ -1,9 +1,10 @@
 import pygame
 import sys
-from entities import Road, Torch, Player, Coin, Rock
+from entities import Road, Torch, Player, Coin, Rock, Button
 from animation import Pos_Iterator
 from settings import *
 from random import choice, randint
+from assets import assets
 
 pygame.init()
 
@@ -64,6 +65,18 @@ class Game:
                             self.movement = 'right'
                         case pygame.K_w:
                             self.movement = 'up'
+                        case pygame.K_p:
+                            paused = True
+                            while paused:
+                                for event in pygame.event.get():
+                                    if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                                        paused = False
+                                    elif event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_q):
+                                        pygame.quit()
+                                        sys.exit()
+                                self.render()
+
+
 
                 elif event.type == ADD_TORCH:
                     self.torches.add(Torch(True), Torch(False))
@@ -118,42 +131,130 @@ class Game:
                     self.rocks.remove(rock)
                     self.rocks_onscreen.add(rock)
                 if self.player.sprite.rect_collision.colliderect(rock):
-                    # pygame.sprite.Sprite.kill(rock)
-                    self.rocks.remove(rock)
-                    self.rocks_onscreen.add(rock)
-                    self.health -= 1
+                    self.player.sprite.dying()
+                    while True:
+                        died = self.player.sprite.update()
+                        print(died)
+                        if died == True:
+                            # print('i died')
+                            # print('died')
+                            return
+                        # print(died)
+                        self.render()
 
-            self.screen.fill(WALL_GREY)
-            self.road.render()
-            self.torches.update()
-            self.torches.draw(self.screen)
+                    # self.rocks.remove(rock)
+                    # self.rocks_onscreen.add(rock)
+                    # self.health -= 1
+                    # self.screen.blit()
 
-            self.coin_iterator.update()
-            self.coin_pos = self.coin_iterator.get_pos()
-            self.coins.update(self.coin_pos) 
+            self.update()
+            self.render()
             # if later decide to have coins rotate on their own instead of uniformly, 
             # just don't pass self.coin_pos to self.coins.update()
-            self.coins.draw(self.screen)
-            self.rocks.draw(self.screen)
-            self.rocks.update()
-            self.rocks.draw(self.screen)
-            self.player.update(self.movement)
-            self.player.draw(self.screen)
-            self.rocks_onscreen.update()
-            self.rocks_onscreen.draw(self.screen)
+
+            # self.screen.fill(WALL_GREY)
+            # self.road.render()
+            # self.torches.draw(self.screen)
+            # self.coins.draw(self.screen)
+            # self.rocks.draw(self.screen)
+            # self.rocks.draw(self.screen)
+            # self.player.draw(self.screen)
+            # self.rocks_onscreen.draw(self.screen)
+
+            # pygame.display.update()
+            # self.clock.tick(60)
 
             # pygame.draw.rect(self.screen, "Red", self.player.sprite.rect_collision)
-
-            pygame.display.update()
-            self.clock.tick(60)
             # print(len(self.rocks_onscreen.sprites()))
             # print(self.clock.get_fps())
-            print(self.health)
+            # print(self.health)
             # print(self.score)
+
+    def update(self):
+        self.torches.update()
+        self.coin_iterator.update()
+        self.coin_pos = self.coin_iterator.get_pos()
+        self.coins.update(self.coin_pos) 
+        self.rocks.update()
+        self.player.update(self.movement)
+        self.rocks_onscreen.update()
+
+    def render(self):
+        self.screen.fill(WALL_GREY)
+        self.road.render()
+        self.torches.draw(self.screen)
+        self.coins.draw(self.screen)
+        self.rocks.draw(self.screen)
+        self.rocks.draw(self.screen)
+        self.player.draw(self.screen)
+        self.rocks_onscreen.draw(self.screen)
+
+        pygame.display.update()
+        self.clock.tick(60)
+
+
             
 
+
     
-Game().run()
+# Game().run()
 
 # class Main:
 #     def __init__(self):
+
+class Menu:
+    def __init__(self):
+        self.screen = pygame.display.set_mode(RES)
+        self.play_button = Button((WIDTH // 2, 400), 'play')
+        self.clock = pygame.time.Clock()
+        self.road = Road(self.screen)
+        self.text = assets['text']['dungeonrun']
+    
+    def run(self):
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    match event.key:
+                        case pygame.K_q:
+                            pygame.quit()
+                            sys.exit()
+                        case pygame.K_RETURN:
+                            return 
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    play = self.play_button.click(pygame.mouse.get_pos())
+                    if play:
+                        return
+                    
+            self.play_button.update(pygame.mouse.get_pos())
+            self.screen.fill(WALL_GREY)
+            self.road.render()
+            self.screen.blit(self.text, (50, 50))
+            self.play_button.render(self.screen)
+            pygame.display.update()
+            self.clock.tick(60)
+
+class Info:
+    def __init__(self):
+        self.screen = pygame.display.set_mode(RES)
+        self.play_button = Button((WIDTH // 2, 400), 'play')
+        self.clock = pygame.time.Clock()
+        self.road = Road(self.screen)
+        self.text = assets['text']['dungeonrun']
+
+# Menu().run()
+# while True: 
+#     end = Game().run()
+#     if end == 'replay':
+#         continue
+#     elif end == 'Menu':
+#         Menu().run()
+#     elif end == 'info':
+#         Info().run()
+
+while True:
+    Menu().run()
+    Game().run()
