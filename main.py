@@ -1,5 +1,7 @@
 import pygame
 import sys
+
+import pygame.freetype
 from entities import Road, Torch, Player, Coin, Rock, Button
 from animation import Pos_Iterator
 from settings import *
@@ -18,8 +20,9 @@ WAIT = pygame.USEREVENT + 4
 
 
 class Game:
-    def __init__(self):
-        self.screen = pygame.display.set_mode(RES)
+    def __init__(self, screen):
+        # self.screen = pygame.display.set_mode(RES)
+        self.screen = screen
         self.clock = pygame.time.Clock()
         self.road = Road(self.screen)
         self.torches = pygame.sprite.Group()
@@ -145,7 +148,7 @@ class Game:
                     while True:
                         died = self.player.sprite.update()
                         if died:
-                            return
+                            return 'score', self.score
                         self.render()
                         pygame.display.update()
                         self.clock.tick(60)
@@ -182,8 +185,9 @@ class Game:
 
 
 class Menu:
-    def __init__(self):
-        self.screen = pygame.display.set_mode(RES)
+    def __init__(self, screen):
+        # self.screen = pygame.display.set_mode(RES)
+        self.screen = screen
         self.play_button = Button((200, 330), 'play')
         self.info_button = Button((350, 330), 'info')
         self.clock = pygame.time.Clock()
@@ -206,8 +210,8 @@ class Menu:
                         case pygame.K_ESCAPE:
                             pygame.quit()
                             sys.exit()
-                        case pygame.K_RETURN:
-                            return 
+                        # case pygame.K_RETURN:
+                        #     return 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     play = self.play_button.click(mouse)
                     if play:
@@ -216,7 +220,7 @@ class Menu:
                         while True:
                             self.player_img = self.player_animation.animate()
                             if self.player_img == False:
-                                return
+                                return 'game'
                             self.screen.fill(WALL_GREY)
                             self.road.render()
                             self.screen.blit(self.player_img, self.player_rect)
@@ -263,6 +267,110 @@ class Menu:
         self.play_button.render(self.screen)
         self.info_button.render(self.screen)
 
-while True:
-    Menu().run()
-    Game().run()
+class Score:
+    def __init__(self, screen, scores):
+        self.scores = scores
+        self.new_score = scores[-1]
+        print(self.new_score)
+        self.scores.sort(reverse=True)
+        print(self.scores)
+
+        self.screen = screen
+        self.road = Road(screen)
+        self.clock = pygame.time.Clock()
+        self.home_button = Button((360, 420), 'home')
+        self.play_button = Button((200, 420), 'play')
+        self.player_animation = Animation('player', speed=0.2, state='idle', loop=False)
+        self.player_img = self.player_animation.animate()
+        self.player_rect = self.player_img.get_rect(center=PLAYER_CENTER)
+        self.font_rank = pygame.freetype.SysFont('Aerial', 25)
+        self.font_score = pygame.freetype.SysFont('Aerial', 25, True)
+        self.text = assets['text']['stats']
+
+        
+    def run(self):
+        while True:
+            mouse = pygame.mouse.get_pos()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    match event.key:
+                        case pygame.K_ESCAPE:
+                            pygame.quit()
+                            sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    play = self.play_button.click(mouse)
+                    if play:
+                        self.player_animation.set_state('turn', True)
+                        self.player_animation.set_loop(False)
+                        while True:
+                            self.player_img = self.player_animation.animate()
+                            if self.player_img == False:
+                                return 'game'
+                            self.screen.fill(WALL_GREY)
+                            self.road.render()
+                            self.screen.blit(self.player_img, self.player_rect)
+                            pygame.display.update()
+                            self.clock.tick(60)    
+                    home = self.home_button.click(mouse)
+                    if home:
+                        return 'menu'
+                    
+            self.player_img = self.player_animation.animate()
+            if self.player_img == False:
+                self.player_animation.set_state(choice(['idle', 'lookaround']), reset=True)
+                self.player_img = self.player_animation.animate()
+                    
+            self.play_button.update(mouse)
+            self.home_button.update(mouse)
+
+            self.render()
+            pygame.display.update()
+            self.clock.tick(60)
+
+    def render(self):
+        self.screen.fill(WALL_GREY)
+        self.road.render()
+        # self.screen.blit(self.text, (50, 50))
+        self.screen.blit(self.player_img, self.player_rect)
+        self.play_button.render(self.screen)
+        self.home_button.render(self.screen)
+        self.screen.blit(self.text, (150, 30))
+
+        for i in range(5):
+        #     rank = self.font_rank.render(str(i + 1), True, 'Black')
+        #     rank_rect = rank.get_rect(center=(100, 100 + 50 * i))
+            try:
+                self.font_score.render_to(self.screen, (300, 140 + 35 * i), str(self.scores[i]), COIN_YELLOW)
+                self.font_rank.render_to(self.screen, (180, 140 + 35 * i), str(i + 1), RED)
+                self.screen.blit(pygame.transform.scale(assets['coin']['default'][0], (25, 25)), (270, 137 + 35 * i))
+            except IndexError:
+                pass
+                
+                
+
+        
+
+# screen = pygame.display.set_mode(RES)
+# while True:
+#     Menu(screen).run()
+    # Game(screen).run()
+
+
+def main():
+    screen = pygame.display.set_mode(RES)
+    state = 'menu'
+    scores = []
+    while True:
+        match state:
+            case 'menu':
+                state = Menu(screen).run()
+            case 'game':
+                state, score = Game(screen).run()
+                scores.append(score)
+            case 'score':
+                state = Score(screen, scores).run()
+
+main()

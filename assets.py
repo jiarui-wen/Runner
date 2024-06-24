@@ -52,12 +52,14 @@ assets = {
     'button': {
         'play': load_folder('button/play'),
         'info': load_folder('button/info'),
-        'ok': load_folder('button/ok')
+        'ok': load_folder('button/ok'),
+        'home': load_folder('button/home')
     },
     'text': {
         'dungeonrun': load_img('dungeonrun.png'),
         'paused': load_img('paused.png', 1.5),
-        'pressentertoresume': load_img('pressentertoresume.png', 0.4)
+        'pressentertoresume': load_img('pressentertoresume.png', 0.4),
+        'stats': load_img('stats.png', 0.4)
     },
     'infopage': load_img('infopage.png')
 }
