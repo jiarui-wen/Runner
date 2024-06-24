@@ -35,11 +35,12 @@ class Game:
         self.touch = False
         self.movement = 'default'
         self.score = 0
-        self.health = 50
         self.num_coins = []
         self.lanes = []
         self.rock_in_coins = []
         self.wait = 2
+        self.font_score = pygame.freetype.SysFont('Aerial', 25, True)
+
         pygame.time.set_timer(ADD_TORCH, 500)
         pygame.time.set_timer(ADD_COIN, 300)
         pygame.time.set_timer(ADD_ROCK, 1500)
@@ -177,7 +178,11 @@ class Game:
         self.rocks.draw(self.screen)
         self.rocks.draw(self.screen)
         self.player.draw(self.screen)
-        self.rocks_onscreen.draw(self.screen) 
+        self.rocks_onscreen.draw(self.screen)
+        self.font_score.render_to(self.screen, (45, 30), str(self.score), COIN_YELLOW)
+        self.screen.blit(pygame.transform.scale(assets['coin']['default'][0], (25, 25)), (15, 28))
+
+         
 
     def pause_screen(self):
         self.screen.blit(assets['text']['paused'], (100, 100))
