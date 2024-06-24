@@ -268,18 +268,32 @@ class Menu:
         self.info_button.render(self.screen)
 
 class Score:
-    def __init__(self, screen, scores):
-        self.scores = scores
-        self.new_score = scores[-1]
-        print(self.new_score)
+    def __init__(self, screen, scores_file, show_newscore=True):
+        # self.scores = scores
+        # self.new_score = scores[-1]
+        # print(self.new_score)
+        # self.scores.sort(reverse=True)
+        # print(self.scores)
+        self.file = scores_file
+        self.scores = []
+        self.show_newscore = show_newscore
+        try: 
+            with open(scores_file) as f:
+                for score in f:
+                    score = int(score.rstrip())
+                    self.scores.append(score)
+        except:
+            print('no scores')
+
+        self.new_score = self.scores[-1]
         self.scores.sort(reverse=True)
-        print(self.scores)
 
         self.screen = screen
         self.road = Road(screen)
         self.clock = pygame.time.Clock()
         self.home_button = Button((360, 420), 'home')
         self.play_button = Button((200, 420), 'play')
+        self.clear_button = Button((400, 590), 'clearstats')
         self.player_animation = Animation('player', speed=0.2, state='idle', loop=False)
         self.player_img = self.player_animation.animate()
         self.player_rect = self.player_img.get_rect(center=PLAYER_CENTER)
@@ -317,6 +331,38 @@ class Score:
                     home = self.home_button.click(mouse)
                     if home:
                         return 'menu'
+                    clear = self.clear_button.click(mouse)
+                    if clear:
+                        clear_button = Button((WIDTH//2 - 80, 600), 'clear')
+                        cancel_button = Button((WIDTH//2 + 80, 600), 'cancel')
+                        in_info = True
+                        while in_info: 
+                            mouse = pygame.mouse.get_pos()
+                            for event in pygame.event.get():
+                                if event.type == pygame.MOUSEBUTTONDOWN:
+                                    if clear_button.click(mouse):
+                                        with open(self.file, "w") as f:
+                                            f.write('')
+                                        self.scores = []
+                                        in_info = False
+                                    elif cancel_button.click(mouse):
+                                        in_info = False
+                                elif event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                                    pygame.quit()
+                                    sys.exit()
+                            clear_button.update(mouse)
+                            cancel_button.update(mouse)
+                            # self.render()
+                            self.screen.fill(WALL_GREY)
+                            self.road.render()
+                            self.screen.blit(self.player_img, self.player_rect)
+                            self.screen.blit(assets['clearpage'], (20, 50))
+                            clear_button.render(self.screen)
+                            cancel_button.render(self.screen)
+                            pygame.display.update()
+                            self.clock.tick(60)    
+
+
                     
             self.player_img = self.player_animation.animate()
             if self.player_img == False:
@@ -325,6 +371,7 @@ class Score:
                     
             self.play_button.update(mouse)
             self.home_button.update(mouse)
+            self.clear_button.update(mouse)
 
             self.render()
             pygame.display.update()
@@ -333,25 +380,36 @@ class Score:
     def render(self):
         self.screen.fill(WALL_GREY)
         self.road.render()
-        # self.screen.blit(self.text, (50, 50))
         self.screen.blit(self.player_img, self.player_rect)
         self.play_button.render(self.screen)
         self.home_button.render(self.screen)
+        self.clear_button.render(self.screen)
         self.screen.blit(self.text, (150, 30))
+
+        highlighted = not self.show_newscore
 
         for i in range(5):
         #     rank = self.font_rank.render(str(i + 1), True, 'Black')
         #     rank_rect = rank.get_rect(center=(100, 100 + 50 * i))
             try:
-                self.font_score.render_to(self.screen, (300, 140 + 35 * i), str(self.scores[i]), COIN_YELLOW)
-                self.font_rank.render_to(self.screen, (180, 140 + 35 * i), str(i + 1), RED)
-                self.screen.blit(pygame.transform.scale(assets['coin']['default'][0], (25, 25)), (270, 137 + 35 * i))
+                if self.new_score == self.scores[i] and not highlighted:
+                    pygame.draw.rect(self.screen, HIGHLIGHT, (135, 127 + 35 * i, 270, 30))
+                    highlighted = True
+                self.font_score.render_to(self.screen, (300, 130 + 35 * i), str(self.scores[i]), COIN_YELLOW)
+                self.font_rank.render_to(self.screen, (180, 130 + 35 * i), str(i + 1), RED)
+                self.screen.blit(pygame.transform.scale(assets['coin']['default'][0], (25, 25)), (270, 127 + 35 * i))
             except IndexError:
                 pass
-                
-                
 
-        
+        if not highlighted:
+            try:
+                self.scores.index(self.new_score)
+                pygame.draw.rect(self.screen, HIGHLIGHT, (135, 137 + 35 * 5, 270, 30))
+                self.font_score.render_to(self.screen, (300, 140 + 35 * 5), str(self.new_score), COIN_YELLOW)
+                self.font_rank.render_to(self.screen, (180, 140 + 35 * 5), str(self.scores.index(self.new_score) + 1), RED)     
+                self.screen.blit(pygame.transform.scale(assets['coin']['default'][0], (25, 25)), (270, 137 + 35 * 5))    
+            except ValueError:
+                pass
 
 # screen = pygame.display.set_mode(RES)
 # while True:
@@ -362,15 +420,18 @@ class Score:
 def main():
     screen = pygame.display.set_mode(RES)
     state = 'menu'
-    scores = []
+    # scores = []
     while True:
         match state:
             case 'menu':
                 state = Menu(screen).run()
             case 'game':
                 state, score = Game(screen).run()
-                scores.append(score)
+                # scores.append(score)
+                with open('scores.txt', "a") as f:
+                    f.write(str(score) + '\n')
+
             case 'score':
-                state = Score(screen, scores).run()
+                state = Score(screen, 'scores.txt').run()
 
 main()

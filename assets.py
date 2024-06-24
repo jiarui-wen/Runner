@@ -53,7 +53,10 @@ assets = {
         'play': load_folder('button/play'),
         'info': load_folder('button/info'),
         'ok': load_folder('button/ok'),
-        'home': load_folder('button/home')
+        'home': load_folder('button/home'),
+        'clearstats': load_folder('button/clearstats', 0.4),
+        'clear': load_folder('button/clear', 0.7),
+        'cancel': load_folder('button/cancel', 0.7)
     },
     'text': {
         'dungeonrun': load_img('dungeonrun.png'),
@@ -61,5 +64,6 @@ assets = {
         'pressentertoresume': load_img('pressentertoresume.png', 0.4),
         'stats': load_img('stats.png', 0.4)
     },
-    'infopage': load_img('infopage.png')
+    'infopage': load_img('infopage.png'),
+    'clearpage': load_img('clearpage.png')
 }
