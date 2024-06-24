@@ -14,10 +14,7 @@ pygame.init()
 ADD_TORCH = pygame.USEREVENT + 1
 ADD_COIN = pygame.USEREVENT + 2
 ADD_ROCK = pygame.USEREVENT + 3
-
-pygame.time.set_timer(ADD_TORCH, 500)
-pygame.time.set_timer(ADD_COIN, 300)
-pygame.time.set_timer(ADD_ROCK, 1500)
+WAIT = pygame.USEREVENT + 4
 
 
 class Game:
@@ -39,15 +36,17 @@ class Game:
         self.num_coins = []
         self.lanes = []
         self.rock_in_coins = []
-        # self.first_rock = True
-        # self.first_coin = True
+        self.wait = 2
+        pygame.time.set_timer(ADD_TORCH, 500)
+        pygame.time.set_timer(ADD_COIN, 300)
+        pygame.time.set_timer(ADD_ROCK, 1500)
+        pygame.time.set_timer(WAIT, 1000)
         
-        for i in range(50):
+        for i in range(30):
             num_coins = randint(3, 7)
             self.num_coins.append(num_coins)
             self.lanes.append(choice([-1, 0, 1]))
-            self.rock_in_coins.append(randint(1, num_coins-1))
-
+            self.rock_in_coins.append(randint(1, num_coins))
 
     def run(self):
         running = True
@@ -57,6 +56,10 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif event.type == WAIT:
+                    self.wait -= 1
+                    if self.wait == 0:
+                        pygame.time.set_timer(WAIT, 0)
                 elif event.type == pygame.KEYDOWN:
                     match event.key:
                         case pygame.K_ESCAPE:
@@ -84,14 +87,10 @@ class Game:
 
 
 
-                elif event.type == ADD_TORCH:
+                elif event.type == ADD_TORCH and self.wait == 0:
                     self.torches.add(Torch(True), Torch(False))
 
-                elif event.type == ADD_COIN:
-                    # if self.first_coin:
-                    #     self.first_coin = False
-                    #     continue
-
+                elif event.type == ADD_COIN and self.wait == 0:
                     if self.num_coins[-1] == 0:
                         self.num_coins.pop(-1)
                         self.lanes.pop(-1)
@@ -108,18 +107,15 @@ class Game:
                             num_coins = randint(3, 7)
                             self.num_coins.append(num_coins)
                             self.lanes.append(choice([-1, 0, 1]))
-                            self.rock_in_coins.append(randint(0, num_coins))
+                            self.rock_in_coins.append(randint(1, num_coins))
 
-                elif event.type == ADD_ROCK:
-                    # if self.first_rock:
-                    #     self.first_rock = False
-                    # else:
-                        choices = [-1, 0, 1]
-                        choices.remove(self.lanes[-1])
-                        self.rocks.add(Rock(choice(choices)))
+                elif event.type == ADD_ROCK and self.wait == 0:
+                    choices = [-1, 0, 1]
+                    choices.remove(self.lanes[-1])
+                    self.rocks.add(Rock(choice(choices)))
 
 
-                elif event.type == pygame.FINGERMOTION and (self.touch == False):
+                elif event.type == pygame.FINGERMOTION and not self.touch:
                     self.touch = True
                     if abs(event.dx) > abs(event.dy):
                         if event.dx < -0.001:
@@ -148,8 +144,7 @@ class Game:
                     self.player.sprite.dying()
                     while True:
                         died = self.player.sprite.update()
-                        print(died)
-                        if died == True:
+                        if died:
                             return
                         self.render()
                         pygame.display.update()
